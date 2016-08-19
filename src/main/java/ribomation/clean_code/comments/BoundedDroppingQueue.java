@@ -35,15 +35,18 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
      */
     public void put(ElementType x) {
         //handling of full queue
-        if (full()) { //if full, then
-            getIndex = (getIndex + 1) % elements.length; //just advance the index and overwrite old  entries
+        if (full()) {
+            handleFullQueue();
         } else {
-            queueSize++;  //increment queueSize by one
-        }//end if
+            queueSize++;
+        }
 
-        // insert element
         elements[putIndex] = x;
         putIndex = (putIndex + 1) % elements.length; //advance index modulo the capacity
+    }
+
+    private void handleFullQueue() {
+        getIndex = (getIndex + 1) % elements.length;
     }
 
     /**
@@ -59,18 +62,6 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
         return getElementAndRemoveIt();
     }
 
-    private ElementType getElementAndRemoveIt() {
-        ElementType x = (ElementType) elements[getIndex];
-        getIndex = (getIndex + 1) % elements.length;
-        queueSize--;
-        return x;
-    }
-
-    /**
-     * Returns its current queueSize
-     *
-     * @return number of elements in the queue
-     */
     public int size() {
         return queueSize;
     }
@@ -84,10 +75,6 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
         return size() == 0; //checks is the current queueSize if zero
     }
 
-//    public boolean empty() {
-//        return queueSize == 0;
-//    }
-
     /**
      * Returns true if queueSize==capacity
      *
@@ -95,6 +82,13 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
      */
     public boolean full() {
         return size() == elements.length; //checks if the current queueSize is equals to the capacity
+    }
+
+    private ElementType getElementAndRemoveIt() {
+        ElementType x = (ElementType) elements[getIndex];
+        handleFullQueue();
+        queueSize--;
+        return x;
     }
 
     /**
@@ -107,18 +101,10 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
             int idx = getIndex;
             int N = queueSize;
 
-            /**
-             * return true if it has a next thingy
-             * @return true if we can carry on
-             */
             public boolean hasNext() {
                 return N > 0;
             }
 
-            /**
-             * Returns the next entity
-             * @return the next thingy
-             */
             public ElementType next() {
                 ElementType x = (ElementType) elements[idx];
                 idx = (idx + 1) % elements.length;
@@ -126,34 +112,11 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
                 return x;
             }
 
-            //not used, throws an exceptions if invoked
             public void remove() {
-                throw new UnsupportedOperationException("remove");
+                throw new UnsupportedOperationException("not implemented!");
             }
         };
     }
-
-    //moved to StringUtils. (Kilroy was here)
-//    /**
-//     * Returns true if the given string is null, empty or filled with spaces.
-//     * @param s     string to investigate
-//     * @return  true if blank
-//     */
-//    public static boolean isBlank(String s) {
-//        return s == null || s.trim().length() == 0;
-//    }
-//
-//    /**
-//     * Makes the initial letter upper-case.
-//     * @param s the string
-//     * @return first letter is now in upper-case
-//     */
-//    public static String toInitialCase(String s) {
-//        if (isBlank(s)) return s;
-//        if (s.length() == 1) return s.toUpperCase();
-//        return s.substring(0, 1).toUpperCase() + s.substring(1);
-//    }
-
 
     /**
      * Returns a new list with all the elements in order
@@ -166,13 +129,8 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
         return result; //now return the copy
     }
 
-    /**
-     * This is the toString() function overridden from java.lang.Object
-     *
-     * @return a string
-     */
     public String toString() {
-        return toList().toString(); //invokes toString() on the created list
+        return toList().toString();
     }
 
-}// END OF CLASS
+}
