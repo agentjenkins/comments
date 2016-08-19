@@ -9,7 +9,6 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> {
-    private static int defaultSize = 1;
     private final Object[] elements;
     private int putIndex = 0;
     private int getIndex = 0;
@@ -22,10 +21,6 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
      */
     public BoundedDroppingQueue(int queueSize) {
         elements = new Object[queueSize];
-    }
-
-    public static void setDefaultSize(int defaultSize) {
-        BoundedDroppingQueue.defaultSize = defaultSize;
     }
 
     /**
