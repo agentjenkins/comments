@@ -6,7 +6,6 @@ import java.util.List;
 
 /**
  * A bounded queue, that drops old elements when full.
- *
  */
 @SuppressWarnings("unchecked")
 public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> {
@@ -25,22 +24,9 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
         elements = new Object[queueSize];
     }
 
-    /* default constructor */
-    public BoundedDroppingQueue() {
-        this(defaultSize);
-    }
-
-    // ----setters ----
-
-    /**
-     * Sets the default queueSize
-     * @param defaultSize its new default queueSize
-     */
     public static void setDefaultSize(int defaultSize) {
         BoundedDroppingQueue.defaultSize = defaultSize;
     }
-
-    // ---- business operations ----
 
     /**
      * Inserts an element and overwrites old one when full.
@@ -67,14 +53,16 @@ public class BoundedDroppingQueue<ElementType> implements Iterable<ElementType> 
      * @throws IllegalArgumentException if empty
      */
     public ElementType get() {
-        if (empty()) { //if empty, throw an exception
+        if (empty()) {
             throw new IllegalArgumentException("Empty queue");
         }
+        return getElementAndRemoveIt();
+    }
 
-        //--- removing an element and returning it ----
-        ElementType x = (ElementType) elements[getIndex]; //get it
-        getIndex = (getIndex + 1) % elements.length;        //advance index
-        queueSize--;                                         //decrement queueSize by one
+    private ElementType getElementAndRemoveIt() {
+        ElementType x = (ElementType) elements[getIndex];
+        getIndex = (getIndex + 1) % elements.length;
+        queueSize--;
         return x;
     }
 
